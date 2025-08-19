@@ -2,7 +2,7 @@
 
 The goal is to create a js plugin that gets as input some DOIs makes some API calls to BIP api to display the corresponding Altmetric badges.
 
-We want something similar to <a href="https://badge-docs.altmetric.com/getting-started.html#quick-start">badge-docs.altmetric.com</a>.
+We want something similar to <a href="https://bio.tools/genome_exogenous_genex_sequence_detection_workflow">bio.tools</a> from <a href="https://badge-docs.altmetric.com/getting-started.html#quick-start">badge-docs.altmetric.com</a>.
 
 The API endpoint for fetching BIP visualization data is:
 
