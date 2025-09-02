@@ -82,7 +82,7 @@
     style.id = "doughnut-chart-styles";
     style.innerHTML = `
     .popup-tooltip {
-    width: 260px;
+      width: 180px;
       display: none;
       position: absolute;
       top: 70px;
@@ -97,52 +97,33 @@
       min-width: 180px;
       color: #333;
       line-height: 1.6;
+      font-size: 14px;
     }
 
-     .popup-tooltip.show {
-        display: block;
-        opacity: 1;
-      }
-    .popup-tooltip i {
-        color: #439d44;
-        margin-right: 8px;
-        font-size: 18px;
-      }
+    .popup-tooltip.show {
+      display: block;
+      opacity: 1;
+    }
 
-    .popup-tooltip .close-btn {
-      cursor: pointer;
-      float: right;
-      font-size: 18px;
-      margin-left: 8px;
+    .popup-tooltip i {
+      color: #439d44;
+      margin-right: 8px;
+      font-size: 16px;
     }
 
     .popup-tooltip a {
-        display: inline-block;
-        margin-top: 12px;
-        color: #439d44;
-        font-weight: 600;
-        text-decoration: none;
-        transition: color 0.2s;
-      }
+      display: inline-block;
+      margin-top: 12px;
+      color: #439d44;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
 
     .popup-tooltip a:hover {
-        color: #2e7d32;
-        text-decoration: underline;
-      }
-
-      .close-btn {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        cursor: pointer;
-        font-size: 18px;
-        color: #aaa;
-        transition: color 0.2s;
-      }
-
-      .close-btn:hover {
-        color: #444;
-      }
+      color: #2e7d32;
+      text-decoration: underline;
+    }
   `;
     document.head.appendChild(style);
   }
@@ -167,7 +148,6 @@
       /[^a-z0-9]/gi,
       "_"
     )}">
-      <div class="close-btn">&times;</div>
       <div><i class="fa-solid fa-rocket"></i> Impulse: <strong>${
         VALUE_LABELS[data?.imp_class]
       }</strong></div>
@@ -262,7 +242,7 @@
     );
 
     // Άνοιγμα link στο click
-    chartTooltip.addEventListener("click", () =>
+    canvas.addEventListener("click", () =>
       window.open(
         `https://bip.imsi.athenarc.gr/site/details?id=${data.doi}`,
         "_blank"
