@@ -1,29 +1,51 @@
 (async function () {
-  function loadChartJs(callback) {
-    if (window.Chart) {
+  function loadDependencies(callback) {
+    if (window.Chart && window.ChartDataLabels) {
       callback();
       return;
     }
-    const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/npm/chart.js";
-    script.onload = callback;
-    document.head.appendChild(script);
+
+    const chartScript = document.createElement("script");
+    chartScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
+    chartScript.onload = () => {
+      const dataLabelScript = document.createElement("script");
+      dataLabelScript.src =
+        "https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels";
+      dataLabelScript.onload = () => {
+        const fontAwesomeScript = document.createElement("script");
+        fontAwesomeScript.src = "https://use.fontawesome.com/51e2e27171.js";
+        fontAwesomeScript.onload = () => {
+          // εδώ είμαστε σίγουροι ότι και τα δύο έχουν φορτώσει
+          callback();
+        };
+        document.head.appendChild(fontAwesomeScript);
+      };
+      document.head.appendChild(dataLabelScript);
+    };
+    document.head.appendChild(chartScript);
+
+    // Προσθήκη CSS
+    const cssLink = document.createElement("link");
+    cssLink.rel = "stylesheet";
+    cssLink.href =
+      "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css";
+    document.head.appendChild(cssLink);
   }
 
   const LABEL_MAPPING = {
-    C1: 1, // 0.01%
-    C2: 2, // 0.1%
+    C1: 5, // 0.01%
+    C2: 4, // 0.1%
     C3: 3, // 1%
-    C4: 4, // 10%
-    C5: 5, // 90%
+    C4: 2, // 10%
+    C5: 1, // 90%
   };
 
   const VALUE_LABELS = {
-    1: "Top 0.01%",
-    2: "Top 0.1%",
+    5: "Top 0.01%",
+    4: "Top 0.1%",
     3: "Top 1%",
-    4: "Top 10%",
-    5: "Top 90%",
+    2: "Top 10%",
+    1: "Top 90%",
   };
 
   async function mapLabelsToData(label) {
@@ -52,195 +74,198 @@
     }
   }
 
-  function createTooltip(container, canvas, tooltipModel) {
-    let tooltipEl = container.querySelector(".custom-tooltip");
-    if (!tooltipEl) {
-      tooltipEl = document.createElement("div");
-      tooltipEl.className = "custom-tooltip";
-      Object.assign(tooltipEl.style, {
-        position: "absolute",
-        pointerEvents: "none",
-        background: "rgba(0,0,0,0.75)",
-        color: "white",
-        padding: "6px 10px",
-        borderRadius: "4px",
-        fontWeight: "bold",
-        whiteSpace: "nowrap",
-        transform: "translate(-50%, -100%)",
-        opacity: 0,
-        transition: "opacity 0.15s ease",
-        zIndex: 1000,
-      });
-      container.appendChild(tooltipEl);
+  function injectDoughnutStyles() {
+    // Αν έχουμε ήδη προσθέσει τα styles, δεν τα ξαναπροσθέτουμε
+    if (document.getElementById("doughnut-chart-styles")) return;
+
+    const style = document.createElement("style");
+    style.id = "doughnut-chart-styles";
+    style.innerHTML = `
+    .popup-tooltip {
+    width: 260px;
+      display: none;
+      position: absolute;
+      top: 70px;
+      left: 0;
+      background: linear-gradient(145deg, #ffffff, #f7f9fc);
+      transform: translateY(-50%);
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      z-index: 999;
+      min-width: 180px;
+      color: #333;
+      line-height: 1.6;
     }
 
-    if (tooltipModel.opacity === 0) {
-      tooltipEl.style.opacity = 0;
-      return;
+     .popup-tooltip.show {
+        display: block;
+        opacity: 1;
+      }
+    .popup-tooltip i {
+        color: #439d44;
+        margin-right: 8px;
+        font-size: 18px;
+      }
+
+    .popup-tooltip .close-btn {
+      cursor: pointer;
+      float: right;
+      font-size: 18px;
+      margin-left: 8px;
     }
 
-    const lines = tooltipModel.dataPoints
-      .map((dp) => `${dp.label}: ${VALUE_LABELS[dp.raw] || dp.raw}`)
-      .join("<br>");
-    tooltipEl.innerHTML = lines;
+    .popup-tooltip a {
+        display: inline-block;
+        margin-top: 12px;
+        color: #439d44;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
 
-    const rect = canvas.getBoundingClientRect();
-    tooltipEl.style.left =
-      rect.left + window.scrollX + tooltipModel.caretX + "px";
-    tooltipEl.style.top =
-      rect.top + window.scrollY + tooltipModel.caretY - 10 + "px";
-    tooltipEl.style.opacity = 1;
+    .popup-tooltip a:hover {
+        color: #2e7d32;
+        text-decoration: underline;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        cursor: pointer;
+        font-size: 18px;
+        color: #aaa;
+        transition: color 0.2s;
+      }
+
+      .close-btn:hover {
+        color: #444;
+      }
+  `;
+    document.head.appendChild(style);
   }
 
   function renderDoughnut(container, data) {
+    injectDoughnutStyles(); // φροντίζουμε να μπει η CSS μία φορά
+
     if (!data) {
       container.innerHTML = "<span style='color:red'>No data</span>";
       return;
     }
-
-    container.innerHTML = `<canvas id="chart-${data.doi.replace(
+    container.style.position = "relative";
+    container.style.display = "inline-block";
+    container.style.cursor = "pointer";
+    container.style.margin = "10px";
+    container.innerHTML = `<div class="chart-container" style="position: relative; margin: auto;">
+    <canvas id="chart-${data.doi.replace(
       /[^a-z0-9]/gi,
       "_"
-    )}-doughnut" width="400" height="400"></canvas>`;
+    )}-doughnut" width="400" height="400"></canvas>
+    <div class="popup-tooltip" id="chartTooltip-${data.doi.replace(
+      /[^a-z0-9]/gi,
+      "_"
+    )}">
+      <div class="close-btn">&times;</div>
+      <div><i class="fa-solid fa-rocket"></i> Impulse: <strong>${
+        VALUE_LABELS[data?.imp_class]
+      }</strong></div>
+      <div><i class="fa-solid fa-fire"></i> Popularity: <strong>${
+        VALUE_LABELS[data?.pop_class]
+      }</strong></div>
+      <div><i class="fa-solid fa-comment"></i> Citations: <strong>${
+        VALUE_LABELS[data?.cc_class]
+      }</strong></div>
+      <div><i class="fa-solid fa-landmark"></i> Influence: <strong>${
+        VALUE_LABELS[data?.inf_class]
+      }</strong></div>
+      <a href="https://bip.imsi.athenarc.gr/site/details?id=${
+        data.doi
+      }" target="_blank">Learn more</a>
+    </div>
+  </div>`;
     container.style.width = "64px";
     container.style.height = "64px";
-    container.style.display = "inline-block";
-    container.style.position = "relative"; // απαραίτητο για το tooltip
 
     const canvas = container.querySelector(
       `#chart-${data.doi.replace(/[^a-z0-9]/gi, "_")}-doughnut`
     );
-    const fontSize = Math.max(8, Math.round(canvas.width / canvas.width));
+    const chartTooltip = container.querySelector(
+      `#chartTooltip-${data.doi.replace(/[^a-z0-9]/gi, "_")}`
+    );
 
     const chartData = {
       labels: ["Impulse", "Influence", "Popularity", "Citations"],
       datasets: [
         {
           data: [
-            data.imp_class,
-            5 - data.imp_class, // quadrant 1 (70% filled)
-            data.inf_class,
-            5 - data.inf_class, // quadrant 2 (50% filled)
-            data.pop_class,
-            5 - data.pop_class, // quadrant 3 (90% filled)
-            data.cc_class,
-            5 - data.cc_class,
-          ], // quadrant 4 (30% filled)
-          backgroundColor: [
-            "rgba(75, 192, 192, 0.8)",
-            "rgba(75, 192, 192, 0.1)",
-            "rgba(255, 99, 132, 0.8)",
-            "rgba(255, 99, 132, 0.1)",
-            "rgba(255, 206, 86, 0.8)",
-            "rgba(255, 206, 86, 0.1)",
-            "rgba(54, 162, 235, 0.8)",
-            "rgba(54, 162, 235, 0.1)",
+            data?.imp_class,
+            5 - data?.imp_class,
+            data?.inf_class,
+            5 - data?.inf_class,
+            data?.pop_class,
+            5 - data?.pop_class,
+            data?.cc_class,
+            5 - data?.cc_class,
           ],
-          borderWidth: 1,
+          backgroundColor: [
+            "#439d44",
+            "rgba(67, 157, 68, 0.1)",
+            "#439d44",
+            "rgba(67, 157, 68, 0.1)",
+            "#439d44",
+            "rgba(67, 157, 68, 0.1)",
+            "#439d44",
+            "rgba(67, 157, 68, 0.1)",
+          ],
+          borderWidth: 2,
           borderColor: "#fff",
-          cutout: "50%", // thickness of ring
+          cutout: "55%",
         },
       ],
     };
 
-    new Chart(canvas, {
+    const config = {
       type: "doughnut",
       data: chartData,
+
       options: {
         plugins: {
           datalabels: {
-            formatter: function (value, context) {
-              // Only place icon at the first slice of each pair
-              if (context.dataIndex % 2 === 0) {
-                const icons = ["🚀", "🔥", "💬", "🏛️"];
-                return icons[context.dataIndex / 2];
-              }
-              return "";
+            formatter: (value, context) => {
+              const icons = ["🚀", "🔥", "💬", "🏛️"];
+              const i = Math.floor(context.dataIndex / 2);
+              return context.dataIndex % 2 === 0 && i < icons.length
+                ? icons[i]
+                : "";
             },
-            color: "#000",
-            font: {
-              size: 12,
-            },
+            color: "#333",
+            font: { size: 16 },
+            anchor: "center",
+            align: "center",
+            textAlign: "center",
           },
-          legend: {
-            display: false,
-          },
-          tooltip: {
-            enabled: true,
-          },
+          legend: { display: false },
+          tooltip: { enabled: false },
         },
       },
-      //   plugins: [ChartDataLabels],
+      plugins: [ChartDataLabels],
+    };
+
+    new Chart(canvas, config);
+
+    canvas.addEventListener("mouseenter", () =>
+      chartTooltip.classList.add("show")
+    );
+    // Close button
+    chartTooltip.querySelector(".close-btn").addEventListener("click", () => {
+      chartTooltip.classList.remove("show");
     });
-
-    // Each quadrant has "progress" and "remaining"
-    // const chartData = {
-    //   labels: ["Rocket", "Fire", "Quote", "Bank"],
-    //   datasets: [
-    //     {
-    //       data: [
-    //         70,
-    //         30, // quadrant 1 (70% filled)
-    //         50,
-    //         50, // quadrant 2 (50% filled)
-    //         90,
-    //         10, // quadrant 3 (90% filled)
-    //         30,
-    //         70,
-    //       ], // quadrant 4 (30% filled)
-    //       backgroundColor: [
-    //         "rgba(75, 192, 192, 0.8)",
-    //         "rgba(75, 192, 192, 0.1)",
-    //         "rgba(255, 99, 132, 0.8)",
-    //         "rgba(255, 99, 132, 0.1)",
-    //         "rgba(255, 206, 86, 0.8)",
-    //         "rgba(255, 206, 86, 0.1)",
-    //         "rgba(54, 162, 235, 0.8)",
-    //         "rgba(54, 162, 235, 0.1)",
-    //       ],
-    //       borderWidth: 1,
-    //       borderColor: "#fff",
-    //       cutout: "50%", // thickness of ring
-    //     },
-    //   ],
-    // };
-
-    // const config = {
-    //   type: "doughnut",
-    //   data: data,
-    //   options: {
-    //     plugins: {
-    //       datalabels: {
-    //         formatter: function (value, context) {
-    //           // Only place icon at the first slice of each pair
-    //           if (context.dataIndex % 2 === 0) {
-    //             const icons = ["🚀", "🔥", "💬", "🏛️"];
-    //             return icons[context.dataIndex / 2];
-    //           }
-    //           return "";
-    //         },
-    //         color: "#000",
-    //         font: {
-    //           size: 12,
-    //         },
-    //       },
-    //       legend: {
-    //         display: false,
-    //       },
-    //       tooltip: {
-    //         enabled: true,
-    //       },
-    //     },
-    //   },
-    //   plugins: [ChartDataLabels],
-    // };
-
-    // new Chart(canvas, chartData, config);
   }
 
   async function initEmbeds() {
     const elements = document.querySelectorAll(".bip-doughnut-embed");
-    console.log(elements);
     for (let el of elements) {
       const doi = el.getAttribute("data-doi");
       if (!doi) continue;
@@ -253,9 +278,9 @@
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () =>
-      loadChartJs(initEmbeds)
+      loadDependencies(initEmbeds)
     );
   } else {
-    loadChartJs(initEmbeds);
+    loadDependencies(initEmbeds);
   }
 })();
