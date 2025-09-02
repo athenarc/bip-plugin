@@ -12,13 +12,7 @@
       dataLabelScript.src =
         "https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels";
       dataLabelScript.onload = () => {
-        const fontAwesomeScript = document.createElement("script");
-        fontAwesomeScript.src = "https://use.fontawesome.com/51e2e27171.js";
-        fontAwesomeScript.onload = () => {
-          // εδώ είμαστε σίγουροι ότι και τα δύο έχουν φορτώσει
-          callback();
-        };
-        document.head.appendChild(fontAwesomeScript);
+        callback();
       };
       document.head.appendChild(dataLabelScript);
     };
@@ -206,28 +200,54 @@
     const config = {
       type: "doughnut",
       data: chartData,
-
       options: {
         plugins: {
           datalabels: {
-            formatter: (value, context) => {
-              const icons = ["🚀", "🔥", "💬", "🏛️"];
-              const i = Math.floor(context.dataIndex / 2);
-              return context.dataIndex % 2 === 0 && i < icons.length
-                ? icons[i]
-                : "";
-            },
-            color: "#333",
-            font: { size: 16 },
-            anchor: "center",
-            align: "center",
-            textAlign: "center",
+            display: false, // δεν τα χρησιμοποιούμε πάνω στα slices
           },
           legend: { display: false },
           tooltip: { enabled: false },
         },
       },
-      plugins: [ChartDataLabels],
+      plugins: [
+        ChartDataLabels,
+        {
+          id: "centerIcons",
+          afterDraw: (chart) => {
+            const { ctx, chartArea } = chart;
+            const centerX = (chartArea.left + chartArea.right) / 2;
+            const centerY = (chartArea.top + chartArea.bottom) / 2;
+
+            // υπολογίζουμε radius μέσα στο cutout
+            const dataset = chart.data.datasets[0];
+            const cutout = dataset.cutout
+              ? parseFloat(dataset.cutout) / 100
+              : 0.55;
+            const radius =
+              ((Math.min(chartArea.width, chartArea.height) / 2) *
+                (1 + cutout)) /
+              2 /
+              2.5;
+
+            const icons = ["\uf135", "\uf06d", "\uf10d", "\uf19c"]; // rocket, fire, comment, landmark
+            ctx.save();
+            ctx.font = "12px FontAwesome";
+            ctx.fillStyle = "#333";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            for (let i = 0; i < 4; i++) {
+              let angle = -Math.PI / 2 + i * (Math.PI / 2); // τεταρτημόρια ξεκινώντας πάνω
+              angle += Math.PI / 4; // μετακίνηση στη μέση του τεταρτημορίου
+              const x = centerX + radius * Math.cos(angle);
+              const y = centerY + radius * Math.sin(angle);
+              ctx.fillText(icons[i], x, y);
+            }
+
+            ctx.restore();
+          },
+        },
+      ],
     };
 
     new Chart(canvas, config);
