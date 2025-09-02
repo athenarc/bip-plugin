@@ -45,7 +45,7 @@
     4: "Top 0.1%",
     3: "Top 1%",
     2: "Top 10%",
-    1: "Top 90%",
+    1: "Average",
   };
 
   async function mapLabelsToData(label) {
@@ -86,7 +86,7 @@
       display: none;
       position: absolute;
       top: 70px;
-      left: 0;
+      left: 74px;
       background: linear-gradient(145deg, #ffffff, #f7f9fc);
       transform: translateY(-50%);
       border: 1px solid #ccc;
@@ -180,9 +180,6 @@
       <div><i class="fa-solid fa-landmark"></i> Influence: <strong>${
         VALUE_LABELS[data?.inf_class]
       }</strong></div>
-      <a href="https://bip.imsi.athenarc.gr/site/details?id=${
-        data.doi
-      }" target="_blank">Learn more</a>
     </div>
   </div>`;
     container.style.width = "64px";
@@ -255,13 +252,22 @@
 
     new Chart(canvas, config);
 
-    canvas.addEventListener("mouseenter", () =>
+    container.addEventListener("mouseenter", () =>
       chartTooltip.classList.add("show")
     );
-    // Close button
-    chartTooltip.querySelector(".close-btn").addEventListener("click", () => {
-      chartTooltip.classList.remove("show");
-    });
+
+    // Κλείσιμο tooltip όταν φεύγει ο δείκτης από το container
+    container.addEventListener("mouseleave", () =>
+      chartTooltip.classList.remove("show")
+    );
+
+    // Άνοιγμα link στο click
+    chartTooltip.addEventListener("click", () =>
+      window.open(
+        `https://bip.imsi.athenarc.gr/site/details?id=${data.doi}`,
+        "_blank"
+      )
+    );
   }
 
   async function initEmbeds() {
