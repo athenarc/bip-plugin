@@ -101,15 +101,17 @@
     container.innerHTML = `<canvas id="chart-${data.doi.replace(
       /[^a-z0-9]/gi,
       "_"
-    )}-radar" width="400" height="400"></canvas>`;
+    )}-polar" width="400" height="400"></canvas>`;
     container.style.width = "64px";
     container.style.height = "64px";
     container.style.display = "inline-block";
     container.style.position = "relative"; // απαραίτητο για το tooltip
 
-    const canvas = container.querySelector("canvas");
+    const canvas = container.querySelector(
+      `#chart-${data.doi.replace(/[^a-z0-9]/gi, "_")}-polar`
+    );
     const fontSize = Math.max(8, Math.round(canvas.width / canvas.width));
-    console.log(fontSize);
+
     new Chart(canvas, {
       type: "polarArea",
       data: {
@@ -179,9 +181,8 @@
     });
   }
 
-  const elements = document.querySelectorAll(".bip-embed");
   async function initEmbeds() {
-    const elements = document.querySelectorAll(".bip-embed");
+    const elements = document.querySelectorAll(".bip-polar-embed");
     for (let el of elements) {
       const doi = el.getAttribute("data-doi");
       if (!doi) continue;
@@ -191,13 +192,11 @@
       renderPolarArea(el, data);
     }
   }
-  for (const el of elements) {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", () =>
-        loadChartJs(initEmbeds)
-      );
-    } else {
-      loadChartJs(initEmbeds);
-    }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () =>
+      loadChartJs(initEmbeds)
+    );
+  } else {
+    loadChartJs(initEmbeds);
   }
 })();
