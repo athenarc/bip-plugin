@@ -6,6 +6,7 @@
     }
 
     const chartScript = document.createElement("script");
+    // TODO: include only chart type that we need
     chartScript.src = "https://cdn.jsdelivr.net/npm/chart.js";
     chartScript.onload = () => {
       const dataLabelScript = document.createElement("script");
@@ -21,6 +22,7 @@
     // Προσθήκη CSS
     const cssLink = document.createElement("link");
     cssLink.rel = "stylesheet";
+    // TODO: include only icons that we need
     cssLink.href =
       "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css";
     document.head.appendChild(cssLink);
@@ -69,7 +71,7 @@
   }
 
   function injectDoughnutStyles() {
-    // Αν έχουμε ήδη προσθέσει τα styles, δεν τα ξαναπροσθέτουμε
+    // avoid multiple injections
     if (document.getElementById("doughnut-chart-styles")) return;
 
     const style = document.createElement("style");
@@ -79,18 +81,18 @@
       width: 180px;
       display: none;
       position: absolute;
-      top: 70px;
+      top: 37px;
       left: 74px;
       background: linear-gradient(145deg, #ffffff, #f7f9fc);
       transform: translateY(-50%);
       border: 1px solid #ccc;
-      padding: 20px;
-      border-radius: 20px;
+      padding: 13px;
+      border-radius: 5px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       z-index: 999;
       min-width: 180px;
       color: #333;
-      line-height: 1.6;
+      line-height: 1.5;
       font-size: 14px;
     }
 
@@ -123,8 +125,8 @@
   }
 
   function renderDoughnut(container, data) {
-    injectDoughnutStyles(); // φροντίζουμε να μπει η CSS μία φορά
-
+    injectDoughnutStyles(); // inject styles only once
+    
     if (!data) {
       container.innerHTML = "<span style='color:red'>No data</span>";
       return;
@@ -142,17 +144,17 @@
       /[^a-z0-9]/gi,
       "_"
     )}">
-      <div><i class="fa-solid fa-rocket"></i> Impulse: <strong>${
-        VALUE_LABELS[data?.imp_class]
-      }</strong></div>
-      <div><i class="fa-solid fa-fire"></i> Popularity: <strong>${
+    <div><i class="fa-solid fa-fire"></i> Popularity: <strong>${
         VALUE_LABELS[data?.pop_class]
-      }</strong></div>
-      <div><i class="fa-solid fa-comment"></i> Citations: <strong>${
-        VALUE_LABELS[data?.cc_class]
-      }</strong></div>
+      }</strong></div>  
       <div><i class="fa-solid fa-landmark"></i> Influence: <strong>${
         VALUE_LABELS[data?.inf_class]
+      }</strong></div>
+      <div><i class="fa-solid fa-quote-left"></i> Citation Count: <strong>${
+        VALUE_LABELS[data?.cc_class]
+      }</strong></div>
+      <div><i class="fa-solid fa-rocket"></i> Impulse: <strong>${
+        VALUE_LABELS[data?.imp_class]
       }</strong></div>
     </div>
   </div>`;
@@ -167,18 +169,18 @@
     );
 
     const chartData = {
-      labels: ["Impulse", "Influence", "Popularity", "Citations"],
+      labels: ["Popularity", "Influence", "Citation", "Impulse"],
       datasets: [
         {
-          data: [
-            data?.imp_class,
-            5 - data?.imp_class,
+          data: [           
             data?.inf_class,
             5 - data?.inf_class,
-            data?.pop_class,
-            5 - data?.pop_class,
             data?.cc_class,
             5 - data?.cc_class,
+            data?.imp_class,
+            5 - data?.imp_class,
+            data?.pop_class,
+            5 - data?.pop_class,
           ],
           backgroundColor: [
             "#439d44",
@@ -203,7 +205,7 @@
       options: {
         plugins: {
           datalabels: {
-            display: false, // δεν τα χρησιμοποιούμε πάνω στα slices
+            display: false, // don't show labels on slices
           },
           legend: { display: false },
           tooltip: { enabled: false },
@@ -218,7 +220,7 @@
             const centerX = (chartArea.left + chartArea.right) / 2;
             const centerY = (chartArea.top + chartArea.bottom) / 2;
 
-            // υπολογίζουμε radius μέσα στο cutout
+            // calculate radius inside cutout
             const dataset = chart.data.datasets[0];
             const cutout = dataset.cutout
               ? parseFloat(dataset.cutout) / 100
@@ -229,7 +231,7 @@
               2 /
               2.5;
 
-            const icons = ["\uf135", "\uf06d", "\uf10d", "\uf19c"]; // rocket, fire, comment, landmark
+            const icons = ["\uf19c", "\uf10d", "\uf135", "\uf06d"];
             ctx.save();
             ctx.font = "10px FontAwesome";
             ctx.fillStyle = "#333";
@@ -237,8 +239,8 @@
             ctx.textBaseline = "middle";
 
             for (let i = 0; i < 4; i++) {
-              let angle = -Math.PI / 2 + i * (Math.PI / 2); // τεταρτημόρια ξεκινώντας πάνω
-              angle += Math.PI / 4; // μετακίνηση στη μέση του τεταρτημορίου
+              let angle = -Math.PI / 2 + i * (Math.PI / 2); // quadrants starting from top left
+              angle += Math.PI / 4; // move to middle of the visualisation
               const x = centerX + radius * Math.cos(angle);
               const y = centerY + radius * Math.sin(angle);
               ctx.fillText(icons[i], x, y);
@@ -256,12 +258,12 @@
       chartTooltip.classList.add("show")
     );
 
-    // Κλείσιμο tooltip όταν φεύγει ο δείκτης από το container
+    // close tooltip when mouse leaves the container
     container.addEventListener("mouseleave", () =>
       chartTooltip.classList.remove("show")
     );
 
-    // Άνοιγμα link στο click
+    // open link on click
     canvas.addEventListener("click", () =>
       window.open(
         `https://bip.imsi.athenarc.gr/site/details?id=${data.doi}`,
