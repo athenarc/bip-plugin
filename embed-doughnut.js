@@ -231,7 +231,7 @@
 
             const icons = ["\uf135", "\uf06d", "\uf10d", "\uf19c"]; // rocket, fire, comment, landmark
             ctx.save();
-            ctx.font = "12px FontAwesome";
+            ctx.font = "10px FontAwesome";
             ctx.fillStyle = "#333";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
