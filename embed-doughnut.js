@@ -26,6 +26,12 @@
     cssLink.href =
       "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css";
     document.head.appendChild(cssLink);
+
+    // Load Nunito font from Google Fonts
+    const fontLink = document.createElement("link");
+    fontLink.href = "https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap";
+    fontLink.rel = "stylesheet";
+    document.head.appendChild(fontLink);  
   }
 
   const LABEL_MAPPING = {
@@ -55,7 +61,6 @@
   function getColorForClass(className) {
     return COLOR_MAPPING[className] || "#81c784";
   }
-
 
   async function mapLabelsToData(label) {
     return LABEL_MAPPING[label] || null;
@@ -106,6 +111,7 @@
       color: #333;
       line-height: 1.5;
       font-size: 14px;
+      font-family: 'Nunito', sans-serif;
       white-space: nowrap;
     }
 
