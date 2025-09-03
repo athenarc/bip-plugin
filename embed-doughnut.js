@@ -44,6 +44,19 @@
     1: "Average",
   };
 
+  const COLOR_MAPPING = {
+    5: "#1b5e20", // C1 - Very dark green (Top 0.01%)
+    4: "#2e7d32", // C2 - Dark green (Top 0.1%)
+    3: "#4caf50", // C3 - Medium green (Top 1%)
+    2: "#8bc34a", // C4 - Light green (Top 10%)
+    1: "#c8e6c9", // C5 - Very light green (Average)
+  };
+
+  function getColorForClass(className) {
+    return COLOR_MAPPING[className] || "#81c784";
+  }
+
+
   async function mapLabelsToData(label) {
     return LABEL_MAPPING[label] || null;
   }
@@ -83,7 +96,7 @@
       position: absolute;
       top: 37px;
       left: 74px;
-      background: linear-gradient(145deg, #ffffff, #f7f9fc);
+      background: #f8f9fa;
       transform: translateY(-50%);
       border: 1px solid #ccc;
       padding: 13px;
@@ -102,7 +115,7 @@
     }
 
     .popup-tooltip i {
-      color: #439d44;
+      color: #808080;
       margin-right: 8px;
       font-size: 16px;
     }
@@ -110,7 +123,7 @@
     .popup-tooltip a {
       display: inline-block;
       margin-top: 12px;
-      color: #439d44;
+      color: #808080;
       font-weight: 600;
       text-decoration: none;
       transition: color 0.2s;
@@ -144,16 +157,16 @@
       /[^a-z0-9]/gi,
       "_"
     )}">
-    <div><i class="fa-solid fa-fire"></i> Popularity: <strong>${
+    <div><i class="fa-solid fa-fire"></i> Popularity: <strong style="color: #439d44;">${
         VALUE_LABELS[data?.pop_class]
       }</strong></div>  
-      <div><i class="fa-solid fa-landmark"></i> Influence: <strong>${
+      <div><i class="fa-solid fa-landmark"></i> Influence: <strong style="color: #439d44;">${
         VALUE_LABELS[data?.inf_class]
       }</strong></div>
-      <div><i class="fa-solid fa-quote-left"></i> Citation Count: <strong>${
+      <div><i class="fa-solid fa-quote-left"></i> Citation Count (${data?.cc}): <strong style="color: #439d44;">${
         VALUE_LABELS[data?.cc_class]
       }</strong></div>
-      <div><i class="fa-solid fa-rocket"></i> Impulse: <strong>${
+      <div><i class="fa-solid fa-rocket"></i> Impulse: <strong style="color: #439d44;">${
         VALUE_LABELS[data?.imp_class]
       }</strong></div>
     </div>
@@ -167,7 +180,7 @@
     const chartTooltip = container.querySelector(
       `#chartTooltip-${data.doi.replace(/[^a-z0-9]/gi, "_")}`
     );
-
+    console.log(data);
     const chartData = {
       labels: ["Popularity", "Influence", "Citation", "Impulse"],
       datasets: [
@@ -183,14 +196,15 @@
             5 - data?.pop_class,
           ],
           backgroundColor: [
-            "#439d44",
-            "rgba(67, 157, 68, 0.1)",
-            "#439d44",
-            "rgba(67, 157, 68, 0.1)",
-            "#439d44",
-            "rgba(67, 157, 68, 0.1)",
-            "#439d44",
-            "rgba(67, 157, 68, 0.1)",
+
+            getColorForClass(data?.inf_class),
+            "#e0e0e0",
+            getColorForClass(data?.cc_class),
+            "#e0e0e0",
+            getColorForClass(data?.imp_class),
+            "#e0e0e0",
+            getColorForClass(data?.pop_class),
+            "#e0e0e0",
           ],
           borderWidth: 2,
           borderColor: "#fff",
@@ -234,7 +248,7 @@
             const icons = ["\uf19c", "\uf10d", "\uf135", "\uf06d"];
             ctx.save();
             ctx.font = "10px FontAwesome";
-            ctx.fillStyle = "#333";
+            ctx.fillStyle = "#808080";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
 
