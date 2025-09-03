@@ -45,11 +45,11 @@
   };
 
   const COLOR_MAPPING = {
-    5: "#1b5e20", // C1 - Very dark green (Top 0.01%)
-    4: "#2e7d32", // C2 - Dark green (Top 0.1%)
-    3: "#4caf50", // C3 - Medium green (Top 1%)
-    2: "#8bc34a", // C4 - Light green (Top 10%)
-    1: "#c8e6c9", // C5 - Very light green (Average)
+    5: "#00441b", // C1 - Very dark green (Top 0.01%)
+    4: "#1a9850", // C2 - Dark green (Top 0.1%)
+    3: "#4daf4a", // C3 - Medium green (Top 1%)
+    2: "#a6d96a", // C4 - Light green (Top 10%)
+    1: "#a8ddb5", // C5 - Very light green (Average)
   };
 
   function getColorForClass(className) {
@@ -157,16 +157,16 @@
       /[^a-z0-9]/gi,
       "_"
     )}">
-    <div><i class="fa-solid fa-fire"></i> Popularity: <strong style="color: #439d44;">${
+    <div><i class="fa-solid fa-fire"></i> Popularity: <strong style="color: ${getColorForClass(data?.pop_class)};">${
         VALUE_LABELS[data?.pop_class]
       }</strong></div>  
-      <div><i class="fa-solid fa-landmark"></i> Influence: <strong style="color: #439d44;">${
+      <div><i class="fa-solid fa-landmark"></i> Influence: <strong style="color: ${getColorForClass(data?.inf_class)};">${
         VALUE_LABELS[data?.inf_class]
       }</strong></div>
-      <div><i class="fa-solid fa-quote-left"></i> Citation Count (${data?.cc}): <strong style="color: #439d44;">${
+      <div><i class="fa-solid fa-quote-left"></i> Citation Count (${data?.cc}): <strong style="color: ${getColorForClass(data?.cc_class)};">${
         VALUE_LABELS[data?.cc_class]
       }</strong></div>
-      <div><i class="fa-solid fa-rocket"></i> Impulse: <strong style="color: #439d44;">${
+      <div><i class="fa-solid fa-rocket"></i> Impulse: <strong style="color: ${getColorForClass(data?.imp_class)};">${
         VALUE_LABELS[data?.imp_class]
       }</strong></div>
     </div>
