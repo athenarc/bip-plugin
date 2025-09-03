@@ -182,31 +182,38 @@
     );
     console.log(data);
     const chartData = {
-      labels: ["Popularity", "Influence", "Citation", "Impulse"],
+            labels: ["Popularity", "Influence", "Citation", "Impulse"],
       datasets: [
         {
-          data: [           
+          data: [
             data?.inf_class,
             5 - data?.inf_class,
+            0.1,
             data?.cc_class,
             5 - data?.cc_class,
+            0.1,
             data?.imp_class,
             5 - data?.imp_class,
+            0.1,
             data?.pop_class,
             5 - data?.pop_class,
+            0.1,
           ],
           backgroundColor: [
-
             getColorForClass(data?.inf_class),
             "#e0e0e0",
+            "transparent",
             getColorForClass(data?.cc_class),
             "#e0e0e0",
+            "transparent",
             getColorForClass(data?.imp_class),
             "#e0e0e0",
+            "transparent",
             getColorForClass(data?.pop_class),
             "#e0e0e0",
+            "transparent",
           ],
-          borderWidth: 2,
+          borderWidth: 0,
           borderColor: "#fff",
           cutout: "55%",
         },
