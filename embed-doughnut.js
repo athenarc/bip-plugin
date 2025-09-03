@@ -271,7 +271,7 @@
   }
 
   async function initEmbeds() {
-    const elements = document.querySelectorAll(".bip-doughnut-embed");
+    const elements = document.querySelectorAll(".bip-embed");
     for (let el of elements) {
       const doi = el.getAttribute("data-doi");
       if (!doi) continue;
