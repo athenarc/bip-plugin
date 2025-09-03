@@ -91,7 +91,6 @@
     style.id = "doughnut-chart-styles";
     style.innerHTML = `
     .popup-tooltip {
-      width: 180px;
       display: none;
       position: absolute;
       top: 37px;
@@ -107,6 +106,7 @@
       color: #333;
       line-height: 1.5;
       font-size: 14px;
+      white-space: nowrap;
     }
 
     .popup-tooltip.show {
