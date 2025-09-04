@@ -120,6 +120,15 @@
       opacity: 1;
     }
 
+    .popup-row { display: flex; justify-content: space-between; align-items: center; }
+    .popup-val { display: inline-flex; align-items: center; gap: 14px; }
+    .popup-val > strong { min-width: 90px; text-align: right; }
+    .popup-val .score { color: #808080; font-size: 12px; min-width: 80px; text-align: right; }
+    .popup-header { display:flex; justify-content: space-between; align-items:center; font-weight:600; margin-bottom:6px; }
+    .popup-header .col-class { min-width: 90px; text-align: right; }
+    .popup-header .col-score { min-width: 80px; text-align: right; }
+
+
     .popup-tooltip i {
       color: #808080;
       margin-right: 8px;
@@ -163,18 +172,34 @@
       /[^a-z0-9]/gi,
       "_"
     )}">
-    <div><i class="fa-solid fa-fire"></i> Popularity: <strong style="color: ${getColorForClass(data?.pop_class)};">${
-        VALUE_LABELS[data?.pop_class]
-      }</strong></div>  
-      <div><i class="fa-solid fa-landmark"></i> Influence: <strong style="color: ${getColorForClass(data?.inf_class)};">${
-        VALUE_LABELS[data?.inf_class]
-      }</strong></div>
-      <div><i class="fa-solid fa-quote-left"></i> Citation Count (${data?.cc}): <strong style="color: ${getColorForClass(data?.cc_class)};">${
-        VALUE_LABELS[data?.cc_class]
-      }</strong></div>
-      <div><i class="fa-solid fa-rocket"></i> Impulse: <strong style="color: ${getColorForClass(data?.imp_class)};">${
-        VALUE_LABELS[data?.imp_class]
-      }</strong></div>
+    <div class="popup-header">
+      <span>Indicator</span>
+      <span class="popup-val"><span class="col-class">Class</span><span class="col-score">Score</span></span>
+    </div>
+    <div class="popup-row"><span><i class="fa-solid fa-fire"></i> Popularity</span>
+  <span class="popup-val">
+    <strong style="color: ${getColorForClass(data?.pop_class)};">${VALUE_LABELS[data?.pop_class]}</strong>
+    <span class="score">${data?.attrank ? data.attrank : ''}</span>
+  </span>
+</div>
+<div class="popup-row"><span><i class="fa-solid fa-landmark"></i> Influence</span>
+  <span class="popup-val">
+    <strong style="color: ${getColorForClass(data?.inf_class)};">${VALUE_LABELS[data?.inf_class]}</strong>
+    <span class="score">${data?.pagerank ? data.pagerank : ''}</span>
+  </span>
+</div>
+<div class="popup-row"><span><i class="fa-solid fa-quote-left"></i> Citation Count</span>
+  <span class="popup-val">
+    <strong style="color: ${getColorForClass(data?.cc_class)};">${VALUE_LABELS[data?.cc_class]}</strong>
+    <span class="score">${data?.cc ? data.cc : ''}</span>
+  </span>
+</div>
+<div class="popup-row"><span><i class="fa-solid fa-rocket"></i> Impulse</span>
+  <span class="popup-val">
+    <strong style="color: ${getColorForClass(data?.imp_class)};">${VALUE_LABELS[data?.imp_class]}</strong>
+    <span class="score">${data?.['3_year_cc'] ?? ''}</span>
+  </span>
+</div>
     </div>
   </div>`;
     container.style.width = "64px";
