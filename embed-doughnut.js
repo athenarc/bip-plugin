@@ -52,10 +52,10 @@
 
   const COLOR_MAPPING = {
     5: "#00441b", // C1 - Very dark green (Top 0.01%)
-    4: "#1a9850", // C2 - Dark green (Top 0.1%)
+    4: "#1b7837", // C2 - Dark green (Top 0.1%)
     3: "#4daf4a", // C3 - Medium green (Top 1%)
     2: "#a6d96a", // C4 - Light green (Top 10%)
-    1: "#a8ddb5", // C5 - Very light green (Average)
+    1: "#808080", // C5 - Grey (Average)
   };
 
   function getColorForClass(className) {
@@ -191,34 +191,33 @@
             labels: ["Popularity", "Influence", "Citation", "Impulse"],
       datasets: [
         {
-          data: [
-            data?.inf_class,
-            5 - data?.inf_class,
-            0.1,
-            data?.cc_class,
-            5 - data?.cc_class,
-            0.1,
-            data?.imp_class,
-            5 - data?.imp_class,
-            0.1,
-            data?.pop_class,
-            5 - data?.pop_class,
-            0.1,
-          ],
-          backgroundColor: [
-            getColorForClass(data?.inf_class),
-            "#e0e0e0",
-            "transparent",
-            getColorForClass(data?.cc_class),
-            "#e0e0e0",
-            "transparent",
-            getColorForClass(data?.imp_class),
-            "#e0e0e0",
-            "transparent",
-            getColorForClass(data?.pop_class),
-            "#e0e0e0",
-            "transparent",
-          ],
+          data: (() => {
+            const out = [];
+            const pushQuad = (cls) => {
+              if (cls === 1) {
+                out.push(0, 5, 0.1);
+              } else {
+                out.push(cls, 5 - cls, 0.1);
+              }
+            };
+            // Order: Influence, Citation, Impulse, Popularity (matching existing rendering order)
+            pushQuad(data?.inf_class);
+            pushQuad(data?.cc_class);
+            pushQuad(data?.imp_class);
+            pushQuad(data?.pop_class);
+            return out;
+          })(),
+          backgroundColor: (() => {
+            const out = [];
+            const pushColors = (cls) => {
+              out.push(getColorForClass(cls), "#e0e0e0", "transparent");
+            };
+            pushColors(data?.inf_class);
+            pushColors(data?.cc_class);
+            pushColors(data?.imp_class);
+            pushColors(data?.pop_class);
+            return out;
+          })(),
           borderWidth: 0,
           borderColor: "#fff",
           cutout: "55%",
