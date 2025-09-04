@@ -212,7 +212,6 @@
     const chartTooltip = container.querySelector(
       `#chartTooltip-${data.doi.replace(/[^a-z0-9]/gi, "_")}`
     );
-    console.log(data);
     const chartData = {
             labels: ["Popularity", "Influence", "Citation", "Impulse"],
       datasets: [
