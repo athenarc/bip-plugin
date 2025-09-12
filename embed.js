@@ -27,9 +27,10 @@
 
     // Load Nunito font from Google Fonts
     const fontLink = document.createElement("link");
-    fontLink.href = "https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap";
+    fontLink.href =
+      "https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap";
     fontLink.rel = "stylesheet";
-    document.head.appendChild(fontLink);  
+    document.head.appendChild(fontLink);
   }
 
   const LABEL_MAPPING = {
@@ -153,9 +154,9 @@
 
   function renderDoughnut(container, data) {
     injectDoughnutStyles(); // inject styles only once
-    
+
     if (!data) {
-      container.innerHTML = "<span style='color:red'>No data</span>";
+      // container.innerHTML = "<span style='color:red'>No data</span>";
       return;
     }
     container.style.position = "relative";
@@ -177,26 +178,34 @@
     </div>
     <div class="popup-row"><span><i class="fa-solid fa-fire"></i> Popularity</span>
   <span class="popup-val">
-    <strong style="color: ${getColorForClass(data?.pop_class)};">${VALUE_LABELS[data?.pop_class]}</strong>
-    <span class="score">${data?.attrank ? data.attrank : ''}</span>
+    <strong style="color: ${getColorForClass(data?.pop_class)};">${
+      VALUE_LABELS[data?.pop_class]
+    }</strong>
+    <span class="score">${data?.attrank ? data.attrank : ""}</span>
   </span>
 </div>
 <div class="popup-row"><span><i class="fa-solid fa-landmark"></i> Influence</span>
   <span class="popup-val">
-    <strong style="color: ${getColorForClass(data?.inf_class)};">${VALUE_LABELS[data?.inf_class]}</strong>
-    <span class="score">${data?.pagerank ? data.pagerank : ''}</span>
+    <strong style="color: ${getColorForClass(data?.inf_class)};">${
+      VALUE_LABELS[data?.inf_class]
+    }</strong>
+    <span class="score">${data?.pagerank ? data.pagerank : ""}</span>
   </span>
 </div>
 <div class="popup-row"><span><i class="fa-solid fa-quote-left"></i> Citation Count</span>
   <span class="popup-val">
-    <strong style="color: ${getColorForClass(data?.cc_class)};">${VALUE_LABELS[data?.cc_class]}</strong>
-    <span class="score">${data?.cc ? data.cc : ''}</span>
+    <strong style="color: ${getColorForClass(data?.cc_class)};">${
+      VALUE_LABELS[data?.cc_class]
+    }</strong>
+    <span class="score">${data?.cc ? data.cc : ""}</span>
   </span>
 </div>
 <div class="popup-row"><span><i class="fa-solid fa-rocket"></i> Impulse</span>
   <span class="popup-val">
-    <strong style="color: ${getColorForClass(data?.imp_class)};">${VALUE_LABELS[data?.imp_class]}</strong>
-    <span class="score">${data?.['3_year_cc'] ?? ''}</span>
+    <strong style="color: ${getColorForClass(data?.imp_class)};">${
+      VALUE_LABELS[data?.imp_class]
+    }</strong>
+    <span class="score">${data?.["3_year_cc"] ?? ""}</span>
   </span>
 </div>
     </div>
@@ -211,7 +220,7 @@
       `#chartTooltip-${data.doi.replace(/[^a-z0-9]/gi, "_")}`
     );
     const chartData = {
-            labels: ["Popularity", "Influence", "Citation", "Impulse"],
+      labels: ["Popularity", "Influence", "Citation", "Impulse"],
       datasets: [
         {
           data: (() => {
@@ -321,13 +330,70 @@
     );
   }
 
+  function renderLoadingSpinner(container) {
+    container.innerHTML = `
+      <span class="loader"></span>
+      <style>
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 3px dotted #00441b;
+            border-style: solid solid dotted dotted;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            box-sizing: border-box;
+            animation: rotation 2s linear infinite;
+          }
+          .loader::after {
+            content: '';  
+            box-sizing: border-box;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            border: 3px dotted #1b7837;
+            border-style: solid solid dotted;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            animation: rotationBack 1s linear infinite;
+            transform-origin: center center;
+          }
+              
+          @keyframes rotation {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          } 
+          @keyframes rotationBack {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(-360deg);
+            }
+          } 
+      </style>
+    `;
+    container.style.display = "inline-block";
+    container.style.width = "64px";
+    container.style.height = "64px";
+    container.style.margin = "10px";
+  }
+
   async function initEmbeds() {
     const elements = document.querySelectorAll(".bip-embed");
     for (let el of elements) {
       const doi = el.getAttribute("data-doi");
       if (!doi) continue;
 
-      el.innerHTML = "<span style='color:gray'>Loading...</span>";
+      renderLoadingSpinner(el);
       const data = await fetchScore(doi);
       renderDoughnut(el, data);
     }
