@@ -1,141 +1,98 @@
-# BIP Doughnut Chart Embed Script
+# BIP! Badges - Interactive Bibliometric Visualization
 
-This JavaScript file provides functionality to dynamically embed **doughnut charts** into web pages for visualizing bibliometric indicators of scientific papers. The indicators are provided by the **[BIP](https://bip.imsi.athenarc.gr/search)** platform. 
-The charts are powered by **Chart.js** and **chartjs-plugin-datalabels**, styled with **Font Awesome** icons and **Nunito** font.
+A lightweight JavaScript library for embedding interactive charts that visualize bibliometric indicators of scientific papers. These charts are powered by the **[BIP! Services platform](https://bip.imsi.athenarc.gr)** and provide an elegant way to display research impact metrics directly in web pages.
 
----
+## 📦 Installation
 
-## Features
+### Quick Start
 
-- **Interactive doughnut charts** for [bibliometric indicators](https://bip.imsi.athenarc.gr/site/indicators):
-  - Popularity
-  - Influence
-  - Citation Count
-  - Impulse
-- **Color-coded classifications** (Top 0.01%, Top 0.1%, Top 1%, Top 10%, Average)
-- **Font Awesome icons** drawn inside the chart quadrants
-- **Popup tooltips** with indicator details and raw scores
-- **Clickable charts** redirecting to the BIP details page for the given DOI
-- **Automatic dependency loading**:
-  - Chart.js
-  - chartjs-plugin-datalabels
-  - Font Awesome CSS
-  - Google Fonts (Nunito)
-
----
-
-## Installation & Usage
-
-1. **Include the script** in your web page (self-executing function, no external build required).
+1. **Include** the [embed.js](https://cdn.jsdelivr.net/gh/athenarc/bip-plugin@main/embed.js) or preferably the minified version [embed.min.js](https://cdn.jsdelivr.net/gh/athenarc/bip-plugin@main/embed.min.js) in your HTML page:
    ```html
-   <script src="path/to/your/embed.js"></script>
+   <script src="https://cdn.jsdelivr.net/gh/athenarc/bip-plugin@main/embed.min.js"></script>
+   ```
+2. **Add** elements with the `bip-embed` class:
+   ```html
+   <div class="bip-embed" data-doi="10.1093/nar/gkx1141"></div>
+   <div class="bip-embed" data-doi="10.1038/nature12373"></div>
    ```
 
-2. **Add HTML elements** with the `bip-embed` class and a `data-doi` attribute containing the DOI of the paper:
-   ```html
-   <div class="bip-embed" data-doi="10.1234/example.doi"></div>
-   <div class="bip-embed" data-doi="10.5678/another.doi"></div>
-   ```
+#### Multiple Charts
+You can embed multiple charts on the same page - each will automatically fetch and display data for its respective DOI.
 
-3. On page load:
-   - Dependencies (Chart.js, plugin, fonts) are automatically loaded.
-   - Each element with `.bip-embed` is replaced with a doughnut chart for the given DOI.
+## 🎯 Usage Examples
 
----
-
-## API Endpoints
-
-The script fetches scores from the **BIP API**:
-
-```
-GET https://bip-api.imsi.athenarc.gr/paper/scores/{encoded_doi}
-```
-
-### Example Response
-```json
-{
-	"doi": "10.1093/nar/gkx1141",
-	"attrank": 6.6810213e-7,
-	"pagerank": 3.009036e-8,
-	"3_year_cc": 231,
-	"cc": 868,
-	"pop_class": "C2",
-	"inf_class": "C3",
-	"imp_class": "C2",
-	"cc_class": "C2"
-}
+### Basic Implementation
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Research Impact Visualization</title>
+    <script src="https://cdn.jsdelivr.net/gh/athenarc/bip-plugin@main/embed.min.js"></script>
+</head>
+<body>
+    <h1>Paper Impact Metrics</h1>
+    
+    <!-- Single chart -->
+    <div class="bip-embed" data-doi="10.1093/nar/gkx1141"></div>
+    
+    <!-- Multiple charts -->
+    <div class="bip-embed" data-doi="10.1038/nature12373"></div>
+    <div class="bip-embed" data-doi="10.1126/science.1234567"></div>
+    
+</body>
+</html>
 ```
 
-The script maps classification codes (`C1–C5`) into numeric classes (1–5) and applies colors and labels.
+## 📊 Performance Classifications
 
----
+The BIP! Services platform offers a range of citation-based impact indicators; a detailed description of the indicators is available [here](https://bip.imsi.athenarc.gr/site/indicators).
 
-## Mappings
+For each indicator, the platform classifies research works into five performance tiers:
 
-### Label Mapping
-| Code | Numeric | Label       |
-|------|---------|-------------|
-| C1   | 5       | Top 0.01%   |
-| C2   | 4       | Top 0.1%    |
-| C3   | 3       | Top 1%      |
-| C4   | 2       | Top 10%     |
-| C5   | 1       | Average     |
+| Class | Label | Color | Description | Percentage |
+|-------|-------|-------|-------------|------------|
+| **C1** | Top 0.01% | `#00441b` | Exceptional impact | Top 0.01% of research works |
+| **C2** | Top 0.1% | `#1b7837` | Very high impact | Top 0.1% of research works |
+| **C3** | Top 1% | `#4daf4a` | High impact | Top 1% of research works |
+| **C4** | Top 10% | `#a6d96a` | Above average | Top 10% of research works |
+| **C5** | Average | `#808080` | Average impact | Remaining 90% |
 
-### Color Mapping
-| Class | Color     | Description   |
-|-------|-----------|---------------|
-| 5     | `#00441b` | Very dark green |
-| 4     | `#1b7837` | Dark green    |
-| 3     | `#4daf4a` | Medium green  |
-| 2     | `#a6d96a` | Light green   |
-| 1     | `#808080` | Grey (Average) |
+### Visual Representation
+- **C1-C4**: Filled segments with green gradient (darker = higher impact)
+- **C5**: Unfilled arc with grey text (represents average performance)
 
----
 
-## Tooltip Layout
+## 🔍 Troubleshooting
 
-Each chart includes a **popup tooltip** showing:
+### Common Issues
 
-- Indicator name with icon
-- Classification label (colored)
-- Raw score (when available)
+**Chart not displaying:**
+- Check that the DOI is valid and accessible
+- Verify internet connection (API calls required)
+- Check browser console for JavaScript errors
 
-Example:
-```
-Popularity   | Top 0.01% | 42
-Influence    | Top 1%    | 0.0021
-Citations    | Top 10%   | 178
-Impulse      | Top 0.1%  | 12
-```
+**Styling issues:**
+- Ensure no CSS conflicts with existing styles
+- Check that Font Awesome and Google Fonts are loading
 
----
+**API errors:**
+- Verify the DOI exists in the BIP database
+- Check API endpoint availability
+- Some DOIs may not have complete data
 
-## Events
+### Debug Mode
+Enable console logging by opening browser developer tools to see detailed information about data fetching and chart rendering.
 
-- **Hover (mouseenter/leave):** Shows/hides tooltip
-- **Click:** Opens BIP details page for the DOI:
+## 📄 License
 
-  ```
-  https://bip.imsi.athenarc.gr/site/details?id={doi}
-  ```
+This project is open source. Please check the BIP! platform [terms of use](https://bip.imsi.athenarc.gr/site/data#api) for further guidelines.
 
----
+## 🤝 Contributing
 
-## Customization
+Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.
 
-- **Chart styles:** Defined in `injectDoughnutStyles()`
-- **Color mapping & labels:** Controlled via `LABEL_MAPPING`, `VALUE_LABELS`, and `COLOR_MAPPING`
-- **Icons:** Font Awesome icons drawn in quadrants (configurable in the `centerIcons` plugin)
+## 📞 Support
 
----
-
-## Dependencies
-
-Automatically loaded at runtime:
-
-- [Chart.js](https://www.chartjs.org/)
-- [chartjs-plugin-datalabels](https://chartjs-plugin-datalabels.netlify.app/)
-- [Font Awesome 6](https://fontawesome.com/)
-- [Google Fonts - Nunito](https://fonts.google.com/specimen/Nunito)
-
----
+For technical support or questions about the BIP platform:
+- **BIP! Services Support**: [bip@athenarc.gr](mailto:bip@athenarc.gr)
+- **BIP! Services Website**: [https://bip.imsi.athenarc.gr](https://bip.imsi.athenarc.gr)
