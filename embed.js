@@ -94,6 +94,10 @@
     const style = document.createElement("style");
     style.id = "doughnut-chart-styles";
     style.innerHTML = `
+    .popup-tooltip *{
+      font-family: 'Nunito', sans-serif !important;
+    } 
+    
     .popup-tooltip {
       display: none;
       position: absolute;
@@ -133,6 +137,8 @@
       color: #808080;
       margin-right: 8px;
       font-size: 16px;
+      font-family: 'Font Awesome 6 Free' !important;
+      font-weight: 900;
     }
 
     .popup-tooltip a {

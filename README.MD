@@ -28,7 +28,7 @@ The charts are powered by **Chart.js** and **chartjs-plugin-datalabels**, styled
 
 1. **Include the script** in your web page (self-executing function, no external build required).
    ```html
-   <script src="path/to/your/embed-doughnjut.js"></script>
+   <script src="path/to/your/embed.js"></script>
    ```
 
 2. **Add HTML elements** with the `bip-embed` class and a `data-doi` attribute containing the DOI of the paper:
