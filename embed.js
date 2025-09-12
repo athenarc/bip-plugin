@@ -156,7 +156,8 @@
     injectDoughnutStyles(); // inject styles only once
 
     if (!data) {
-      // container.innerHTML = "<span style='color:red'>No data</span>";
+      container.innerHTML = "";
+      container.style = "";
       return;
     }
     container.style.position = "relative";
