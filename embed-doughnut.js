@@ -18,8 +18,6 @@
       document.head.appendChild(dataLabelScript);
     };
     document.head.appendChild(chartScript);
-
-    // Προσθήκη CSS
     const cssLink = document.createElement("link");
     cssLink.rel = "stylesheet";
     // TODO: include only icons that we need
