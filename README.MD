@@ -1,6 +1,6 @@
 # BIP! Badges - Interactive Bibliometric Visualization
 
-A lightweight JavaScript library for embedding interactive charts that visualize bibliometric indicators of scientific papers. These charts are powered by the **[BIP! Services platform](https://bip.imsi.athenarc.gr)** and provide an elegant way to display research impact metrics directly in web pages.
+A lightweight JavaScript library for embedding charts that visualize bibliometric indicators of scientific papers and researchers. These charts are powered by the **[BIP! Services platform](https://bip.imsi.athenarc.gr)**.
 
 ## 📦 Installation
 
@@ -58,7 +58,7 @@ This renders a **stats badge** that shows several indicators pulled from the BIP
 | **Publications** | Total number of published papers |
 | **Datasets** | Total number of dataset records |
 | **Software** | Total number of software records |
-| **Other** | Other research outputs |
+| **Other** | Total number of ther research outputs |
 | **Citations** | Total citation count across works |
 | **Popular** | Number of works classified as *Popular* (Top 10% or better) |
 | **Influential** | Number of works classified as *Influential* (Top 10% or better) |
@@ -66,7 +66,7 @@ This renders a **stats badge** that shows several indicators pulled from the BIP
 | **Acad. Age** | Academic age (years since first publication) |
 | **Open Access** | Percentage of works available as Open Access |
 
-Hovering the badge shows a tooltip with a direct link to the researcher's full BIP! Scholar profile. Clicking the badge also opens that profile in a new tab.
+Clicking on the badge redirects to the researcher's full BIP! Scholar profile in a new tab.
 
 ### Compact Layout
 If space is limited, you can display a **compact version** of the badge which hides the text labels and relies only on the indicator icons. Simply add `data-layout="compact"` to the element:
@@ -77,7 +77,7 @@ If space is limited, you can display a **compact version** of the badge which hi
 
 ### Handling Missing Profiles
 
-By default, if no BIP! Scholar profile is found for a given ORCID, the widget will display a fallback message ("No BIP! profile found for this ORCID"). 
+By default, if no public BIP! Scholar profile is found for a given ORCID, the widget will display a fallback message ("No BIP! profile found for this ORCID"). 
 
 If you prefer the widget to completely hide itself when no profile is found (silent mode), you can add the `data-empty-mode="silent"` attribute:
 
