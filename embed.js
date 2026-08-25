@@ -640,7 +640,7 @@
         <div class="bip-scholar-no-profile">
           ${getFaSvg("circle-info")}
           No BIP! Scholar profile found for this ORCID.
-          <a href="https://bip.imsi.athenarc.gr" target="_blank" rel="noopener">Learn more ↗</a>
+          <a href="https://bip.imsi.athenarc.gr/scholar" target="_blank" rel="noopener">Learn more ↗</a>
         </div>
       `;
       return;
