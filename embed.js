@@ -467,15 +467,17 @@
   }
 
   async function initEmbeds() {
-    const elements = document.querySelectorAll(".bip-embed");
-    for (let el of elements) {
-      const doi = el.getAttribute("data-doi");
-      if (!doi) continue;
+    const elements = [...document.querySelectorAll(".bip-embed")];
+    await Promise.all(
+      elements.map(async (el) => {
+        const doi = el.getAttribute("data-doi");
+        if (!doi) return;
 
-      renderLoadingSpinner(el);
-      const data = await fetchScore(doi);
-      renderDoughnut(el, data);
-    }
+        renderLoadingSpinner(el);
+        const data = await fetchScore(doi);
+        renderDoughnut(el, data);
+      })
+    );
   }
 
   // ─── RESEARCHER / SCHOLAR EMBED ──────────────────────────────────────────────
@@ -711,15 +713,17 @@
   }
 
   async function initScholarEmbeds() {
-    const elements = document.querySelectorAll(".bip-scholar-embed");
-    for (let el of elements) {
-      const orcid = el.getAttribute("data-orcid");
-      if (!orcid) continue;
+    const elements = [...document.querySelectorAll(".bip-scholar-embed")];
+    await Promise.all(
+      elements.map(async (el) => {
+        const orcid = el.getAttribute("data-orcid");
+        if (!orcid) return;
 
-      renderLoadingSpinner(el);
-      const data = await fetchScholarScore(orcid);
-      renderScholarBadge(el, data, orcid);
-    }
+        renderLoadingSpinner(el);
+        const data = await fetchScholarScore(orcid);
+        renderScholarBadge(el, data, orcid);
+      })
+    );
   }
 
   // ─── ENTRY POINT ─────────────────────────────────────────────────────────────
