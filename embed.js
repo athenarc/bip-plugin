@@ -544,18 +544,17 @@
         margin-right: 3px;
         color: #757575;
       }
-      .bip-scholar-badge:hover
-  .bip-scholar-badge--compact .bip-scholar-stat {
-    min-width: auto;
-    padding: 0 8px;
-  }
-  .bip-scholar-badge--compact .bip-scholar-stat-value {
-    font-size: 14px;
-  }
-  .bip-scholar-badge--compact .bip-scholar-stat-icon {
-    font-size: 12px;
-    margin-right: 5px;
-  }
+      .bip-scholar-badge--compact .bip-scholar-stat {
+        min-width: auto;
+        padding: 0 8px;
+      }
+      .bip-scholar-badge--compact .bip-scholar-stat-value {
+        font-size: 14px;
+      }
+      .bip-scholar-badge--compact .bip-scholar-stat-icon {
+        font-size: 12px;
+        margin-right: 5px;
+      }
       .bip-scholar-logo {
         display: flex;
         align-items: center;
