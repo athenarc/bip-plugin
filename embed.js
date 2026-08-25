@@ -1,5 +1,15 @@
 (async function () {
-  function loadDependencies(callback) {
+  function loadNunitoFont() {
+    if (document.getElementById("bip-nunito-font")) return;
+    const fontLink = document.createElement("link");
+    fontLink.id = "bip-nunito-font";
+    fontLink.href =
+      "https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap";
+    fontLink.rel = "stylesheet";
+    document.head.appendChild(fontLink);
+  }
+
+  function loadChartDependencies(callback) {
     if (window.Chart && window.ChartDataLabels) {
       callback();
       return;
@@ -18,13 +28,6 @@
       document.head.appendChild(dataLabelScript);
     };
     document.head.appendChild(chartScript);
-
-    // Load Nunito font from Google Fonts
-    const fontLink = document.createElement("link");
-    fontLink.href =
-      "https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap";
-    fontLink.rel = "stylesheet";
-    document.head.appendChild(fontLink);
   }
 
   
@@ -476,7 +479,6 @@
   }
 
   // ─── RESEARCHER / SCHOLAR EMBED ──────────────────────────────────────────────
-  // All code below is purely additive. Nothing above this line is modified.
   // Trigger: <div class="bip-scholar-embed" data-orcid="0000-0002-1234-5678"></div>
   // ─────────────────────────────────────────────────────────────────────────────
 
@@ -721,20 +723,21 @@
   }
 
   // ─── ENTRY POINT ─────────────────────────────────────────────────────────────
-  // Runs both paper and scholar embeds. Each is independent and safe to use alone.
+  // Runs paper and/or scholar embeds. Chart.js loads only when paper embeds exist.
 
-  async function initAllEmbeds() {
-    await Promise.all([
-      initEmbeds(),
-      initScholarEmbeds(),
-    ]);
+  function initAllEmbeds() {
+    loadNunitoFont();
+
+    const hasPapers = document.querySelector(".bip-embed");
+    const hasScholars = document.querySelector(".bip-scholar-embed");
+
+    if (hasScholars) initScholarEmbeds();
+    if (hasPapers) loadChartDependencies(initEmbeds);
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () =>
-      loadDependencies(initAllEmbeds)
-    );
+    document.addEventListener("DOMContentLoaded", initAllEmbeds);
   } else {
-    loadDependencies(initAllEmbeds);
+    initAllEmbeds();
   }
 })();
