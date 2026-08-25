@@ -610,6 +610,12 @@
     container.style.display = "block";
 
     if (!data) {
+      const emptyMode = container.getAttribute("data-empty-mode") || "default";
+      if (emptyMode === "silent") {
+        container.innerHTML = "";
+        container.style.display = "none";
+        return;
+      }
       container.innerHTML = `
         <div class="bip-scholar-no-profile">
           ${getFaSvg("circle-info")}

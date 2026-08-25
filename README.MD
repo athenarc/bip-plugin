@@ -58,7 +58,7 @@ This renders a **stats badge** that shows several indicators pulled from the BIP
 | **Publications** | Total number of published papers |
 | **Datasets** | Total number of dataset records |
 | **Software** | Total number of software records |
-| **Other** | Total number of ther research outputs |
+| **Other** | Total number of other research outputs |
 | **Citations** | Total citation count across works |
 | **Popular** | Number of works classified as *Popular* (Top 10% or better) |
 | **Influential** | Number of works classified as *Influential* (Top 10% or better) |
