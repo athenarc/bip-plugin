@@ -225,7 +225,7 @@
     <strong style="color: ${getColorForClass(data?.pop_class)};">${
       VALUE_LABELS[data?.pop_class]
     }</strong>
-    <span class="score">${data?.attrank ? data.attrank : ""}</span>
+    <span class="score">${data?.attrank ?? ""}</span>
   </span>
 </div>
 <div class="popup-row"><span>${getFaSvg("landmark")} Influence</span>
@@ -233,7 +233,7 @@
     <strong style="color: ${getColorForClass(data?.inf_class)};">${
       VALUE_LABELS[data?.inf_class]
     }</strong>
-    <span class="score">${data?.pagerank ? data.pagerank : ""}</span>
+    <span class="score">${data?.pagerank ?? ""}</span>
   </span>
 </div>
 <div class="popup-row"><span>${getFaSvg("quote-left")} Citation Count</span>
@@ -241,7 +241,7 @@
     <strong style="color: ${getColorForClass(data?.cc_class)};">${
       VALUE_LABELS[data?.cc_class]
     }</strong>
-    <span class="score">${data?.cc ? data.cc : ""}</span>
+    <span class="score">${data?.cc ?? ""}</span>
   </span>
 </div>
 <div class="popup-row"><span>${getFaSvg("rocket")} Impulse</span>
