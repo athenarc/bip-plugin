@@ -371,6 +371,11 @@
 
     new Chart(canvas, config);
 
+    const paperUrl = `https://bip.imsi.athenarc.gr/site/details?id=${data.doi}`;
+    container.setAttribute("role", "link");
+    container.setAttribute("tabindex", "0");
+    container.setAttribute("aria-label", "BIP! paper metrics");
+
     container.addEventListener("mouseenter", () =>
       chartTooltip.classList.add("show")
     );
@@ -380,13 +385,25 @@
       chartTooltip.classList.remove("show")
     );
 
-    // open link on click
-    canvas.addEventListener("click", () =>
-      window.open(
-        `https://bip.imsi.athenarc.gr/site/details?id=${data.doi}`,
-        "_blank"
-      )
+    // Show the same tooltip for keyboard users
+    container.addEventListener("focus", () =>
+      chartTooltip.classList.add("show")
     );
+    container.addEventListener("blur", () =>
+      chartTooltip.classList.remove("show")
+    );
+
+    const openPaperProfile = () =>
+      window.open(paperUrl, "_blank", "noopener");
+
+    container.addEventListener("click", openPaperProfile);
+    container.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        // Prevent Space from also scrolling the page.
+        e.preventDefault();
+        openPaperProfile();
+      }
+    });
   }
 
   function renderLoadingSpinner(container) {
@@ -683,7 +700,11 @@
       window.open(profileUrl, "_blank", "noopener");
     });
     container.querySelector(".bip-scholar-badge").addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") window.open(profileUrl, "_blank", "noopener");
+      if (e.key === "Enter" || e.key === " ") {
+        // Prevent Space from also scrolling the page.
+        e.preventDefault();
+        window.open(profileUrl, "_blank", "noopener");
+      }
     });
   }
 
