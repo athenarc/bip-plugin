@@ -1,6 +1,6 @@
 # BIP! Badges - Interactive Bibliometric Visualization
 
-A lightweight JavaScript library for embedding interactive charts that visualize bibliometric indicators of scientific papers. These charts are powered by the **[BIP! Services platform](https://bip.imsi.athenarc.gr)** and provide an elegant way to display research impact metrics directly in web pages.
+A lightweight JavaScript library for embedding charts that visualize bibliometric indicators of scientific papers and researchers. These charts are powered by the **[BIP! Services platform](https://bip.imsi.athenarc.gr)**.
 
 ## 📦 Installation
 
@@ -16,8 +16,8 @@ A lightweight JavaScript library for embedding interactive charts that visualize
    <div class="bip-embed" data-doi="10.1038/nature12373"></div>
    ```
 
-#### Multiple Charts
-You can embed multiple charts on the same page - each will automatically fetch and display data for its respective DOI.
+### Multiple Charts
+You can embed multiple paper charts and/or researcher badges on the same page — each will automatically fetch and display data for its respective identifier.
 
 ## 🎯 Usage Examples
 
@@ -43,7 +43,66 @@ You can embed multiple charts on the same page - each will automatically fetch a
 </html>
 ```
 
-## 📊 Performance Classifications
+## 🔬 Researcher / Scholar Embed
+
+To display bibliometric indicators for a **researcher**, use the `bip-scholar-embed` class with a `data-orcid` attribute:
+
+```html
+<div class="bip-scholar-embed" data-orcid="0000-0002-1234-5678"></div>
+```
+
+This renders a **stats badge** that shows several indicators pulled from the BIP! API via the researcher's [ORCID](https://orcid.org) identifier:
+
+| Metric | Description |
+|--------|-------------|
+| **Publications** | Total number of published papers |
+| **Datasets** | Total number of dataset records |
+| **Software** | Total number of software records |
+| **Other** | Total number of other research outputs |
+| **Citations** | Total citation count across works |
+| **Popular** | Number of works classified as *Popular* (Top 10% or better) |
+| **Influential** | Number of works classified as *Influential* (Top 10% or better) |
+| **h-index** | The researcher's h-index score |
+| **Acad. Age** | Academic age (years since first publication) |
+| **Open Access** | Percentage of works available as Open Access |
+
+Clicking on the badge redirects to the researcher's full BIP! Scholar profile in a new tab.
+
+### Compact Layout
+If space is limited, you can display a **compact version** of the badge which hides the text labels and relies only on the indicator icons. Simply add `data-layout="compact"` to the element:
+
+```html
+<div class="bip-scholar-embed" data-orcid="0000-0002-1234-5678" data-layout="compact"></div>
+```
+
+### Handling Missing Profiles
+
+By default, if no public BIP! Scholar profile is found for a given ORCID, the widget will display a fallback message ("No BIP! profile found for this ORCID"). 
+
+If you prefer the widget to completely hide itself when no profile is found (silent mode), you can add the `data-empty-mode="silent"` attribute:
+
+```html
+<div class="bip-scholar-embed" data-orcid="0000-0002-1234-5678" data-empty-mode="silent"></div>
+```
+
+### Mixed usage
+
+Both embed types can be freely mixed on the same page — each operates independently:
+
+```html
+<!-- Paper-level doughnut chart -->
+<div class="bip-embed" data-doi="10.1093/nar/gkx1141"></div>
+
+<!-- Researcher stats badge -->
+<div class="bip-scholar-embed" data-orcid="0000-0002-1234-5678"></div>
+
+<!-- Compact researcher stats badge -->
+<div class="bip-scholar-embed" data-orcid="0000-0002-1234-5678" data-layout="compact"></div>
+```
+
+---
+
+## 📊 Performance Classifications *(paper-level)*
 
 The BIP! Services platform offers a range of citation-based impact indicators; a detailed description of the indicators is available [here](https://bip.imsi.athenarc.gr/site/indicators).
 
@@ -67,16 +126,16 @@ For each indicator, the platform classifies research works into five performance
 ### Common Issues
 
 **Chart not displaying:**
-- Check that the DOI is valid and accessible
+- Check that the DOI or ORCID is valid and accessible
 - Verify internet connection (API calls required)
 - Check browser console for JavaScript errors
 
 **Styling issues:**
 - Ensure no CSS conflicts with existing styles
-- Check that Font Awesome and Google Fonts are loading
+- Check that Google Fonts (Nunito) is loading properly
 
 **API errors:**
-- Verify the DOI exists in the BIP database
+- Verify the DOI/ORCID exists in the BIP database
 - Check API endpoint availability
 - Some DOIs may not have complete data
 
